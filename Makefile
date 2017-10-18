@@ -24,6 +24,12 @@ FILES = Salsa20.c Salsa20.h Chacha20.c Chacha20.h Poly1305_64.c Poly1305_64.h AE
 TWEETNACL_HOME ?= $(HACL_HOME)/other_providers/tweetnacl
 
 #
+# Default target
+#
+
+all: libhacl32.so
+
+#
 # Library (64 bits)
 #
 
