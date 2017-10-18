@@ -35,7 +35,7 @@ void print_bytes(uint8_t *b, uint32_t len);
 
 // If some globals need to be initialized before the main, then kremlin will
 // generate and try to link last a function with this type:
-void kremlinit_globals();
+void kremlinit_globals(void);
 
 // Buffers (FIXME remove eqb!)
 #define FStar_Buffer_eqb(b1, b2, n)                                            \
