@@ -45,8 +45,8 @@ libhacl.so: $(FILES)
 	$(CC) $(LIBFLAGS) \
 	  Chacha20Poly1305.c -c -o Chacha20Poly1305.o
 	$(CC) $(OTHER) $(LIBFLAGS) -I ../../test/test-files -I . -Wall \
-	  ../../test/test-files/hacl_test_utils.c \
-	  Salsa20.o Poly1305_64.o Chacha20.o AEAD_Poly1305_64.o Chacha20Poly1305.o SHA2_512.o Ed25519.o Curve25519.o kremlib.c Hacl_Policies.c NaCl.c ../../test/test-files/randombytes.c ../../test/test-files/haclnacl.c \
+	  hacl_test_utils.c \
+	  Salsa20.o Poly1305_64.o Chacha20.o AEAD_Poly1305_64.o Chacha20Poly1305.o SHA2_512.o Ed25519.o Curve25519.o kremlib.c Hacl_Policies.c NaCl.c randombytes.c haclnacl.c \
 	  -o libhacl.so
 
 
@@ -72,8 +72,8 @@ libhacl.a: $(FILES)
 	$(CC) $(LIBFLAGS) \
 	  Chacha20Poly1305.c -c -o Chacha20Poly1305.o
 	$(CC) $(OTHER) $(LIBFLAGS) -I ../../test/test-files -I . -Wall \
-	  ../../test/test-files/hacl_test_utils.c \
-	  Salsa20.o Poly1305_64.o Chacha20.o AEAD_Poly1305_64.o Chacha20Poly1305.o SHA2_512.o Ed25519.o Curve25519.o kremlib.c Hacl_Policies.c NaCl.c ../../test/test-files/randombytes.c ../../test/test-files/haclnacl.c \
+	  hacl_test_utils.c \
+	  Salsa20.o Poly1305_64.o Chacha20.o AEAD_Poly1305_64.o Chacha20Poly1305.o SHA2_512.o Ed25519.o Curve25519.o kremlib.c Hacl_Policies.c NaCl.c randombytes.c haclnacl.c \
 	  -o libhacl.a
 
 #
@@ -98,8 +98,8 @@ libhacl32.so: $(FILES)
 	$(CC) $(LIBFLAGS32) \
 	  Chacha20Poly1305.c -c -o Chacha20Poly1305.o
 	$(CC) -shared  $(LIBFLAGS32) -I ../../test/test-files -I . -Wall \
-	  ../../test/test-files/hacl_test_utils.c \
-	  Salsa20.o Poly1305_64.o Chacha20.o AEAD_Poly1305_64.o Chacha20Poly1305.o SHA2_512.o Ed25519.o Curve25519.o kremlib.c Hacl_Policies.c NaCl.c ../../test/test-files/randombytes.c ../../test/test-files/haclnacl.c \
+	  hacl_test_utils.c \
+	  Salsa20.o Poly1305_64.o Chacha20.o AEAD_Poly1305_64.o Chacha20Poly1305.o SHA2_512.o Ed25519.o Curve25519.o kremlib.c Hacl_Policies.c NaCl.c randombytes.c haclnacl.c \
 	  -o libhacl32.so
 
 #
@@ -124,22 +124,22 @@ libhacl32.a: $(FILES)
 	$(CC) $(LIBFLAGS32) \
 	  Chacha20Poly1305.c -c -o Chacha20Poly1305.o
 	$(CC) -shared  $(LIBFLAGS32) -I ../../test/test-files -I . -Wall \
-	  ../../test/test-files/hacl_test_utils.c \
-	  Salsa20.o Poly1305_64.o Chacha20.o AEAD_Poly1305_64.o Chacha20Poly1305.o SHA2_512.o Ed25519.o Curve25519.o kremlib.c Hacl_Policies.c NaCl.c ../../test/test-files/randombytes.c ../../test/test-files/haclnacl.c \
+	  hacl_test_utils.c \
+	  Salsa20.o Poly1305_64.o Chacha20.o AEAD_Poly1305_64.o Chacha20Poly1305.o SHA2_512.o Ed25519.o Curve25519.o kremlib.c Hacl_Policies.c NaCl.c randombytes.c haclnacl.c \
 	  -o libhacl32.a
 
 unit-tests: libhacl.so
 	$(CC) $(CCOPTS) \
-	-I . -I ../snapshots/kremlib -I ../../test/test-files/ -I $(TWEETNACL_HOME) \
-	$(TWEETNACL_HOME)/tweetnacl.c ../../test/test-files/hacl_test_utils.c \
-	../../test/test-files/unit_tests.c libhacl.so -o unit_tests.exe
+	-I . -I ../snapshots/kremlib -I  -I $(TWEETNACL_HOME) \
+	$(TWEETNACL_HOME)/tweetnacl.c hacl_test_utils.c \
+	unit_tests.c libhacl.so -o unit_tests.exe
 	LD_LIBRARY_PATH=. DYLD_LIBRARY_PATH=. ./unit_tests.exe
 
 unit-tests32: libhacl32.so
 	$(CC) $(CCOPTS32) \
-	-I . -I ../snapshots/kremlib -I ../../test/test-files/ -I $(TWEETNACL_HOME) \
-	$(TWEETNACL_HOME)/tweetnacl.c ../../test/test-files/hacl_test_utils.c \
-	../../test/test-files/unit_tests.c libhacl32.so -o unit_tests32.exe
+	-I . -I ../snapshots/kremlib -I  -I $(TWEETNACL_HOME) \
+	$(TWEETNACL_HOME)/tweetnacl.c hacl_test_utils.c \
+	unit_tests.c libhacl32.so -o unit_tests32.exe
 	LD_LIBRARY_PATH=. DYLD_LIBRARY_PATH=. ./unit_tests32.exe
 
 clean:
