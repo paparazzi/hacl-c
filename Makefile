@@ -3,7 +3,7 @@
 #
 # Compilation flags
 #
-CCOPTS = -Ofast -march=native -mtune=native -m64 -fwrapv -fomit-frame-pointer -funroll-loops
+CCOPTS = -Ofast -march=native -fwrapv -fomit-frame-pointer -funroll-loops
 CCOPTS32 = -Ofast -fwrapv -fomit-frame-pointer -funroll-loops
 
 ifeq ($(SNAPSHOT_DIR),snapshots/hacl-c-compcert)
@@ -22,6 +22,12 @@ endif
 
 FILES = Salsa20.c Salsa20.h Chacha20.c Chacha20.h Poly1305_64.c Poly1305_64.h AEAD_Poly1305_64.c AEAD_Poly1305_64.h SHA2_512.c SHA2_512.h Ed25519.c Ed25519.h Curve25519.c Curve25519.h Chacha20Poly1305.c Chacha20Poly1305.h Hacl_Policies.c Hacl_Policies.h NaCl.c NaCl.h
 TWEETNACL_HOME ?= $(HACL_HOME)/other_providers/tweetnacl
+
+#
+# Default target
+#
+
+all: libhacl32.so
 
 #
 # Library (64 bits)
