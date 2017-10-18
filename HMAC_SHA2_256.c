@@ -1,4 +1,4 @@
-#include "SHA2_256.h"
+#include "HMAC_SHA2_256.h"
 
 static void
 Hacl_Hash_Lib_LoadStore_uint32s_from_be_bytes(uint32_t *output, uint8_t *input, uint32_t len)
@@ -270,39 +270,75 @@ static void Hacl_Hash_SHA2_256_hash(uint8_t *hash1, uint8_t *input, uint32_t len
   Hacl_Hash_SHA2_256_finish(state, hash1);
 }
 
-uint32_t SHA2_256_size_hash = (uint32_t)32;
-
-uint32_t SHA2_256_size_block = (uint32_t)64;
-
-uint32_t SHA2_256_size_state = (uint32_t)137;
-
-void SHA2_256_init(uint32_t *state)
+static void Hacl_HMAC_SHA2_256_xor_bytes_inplace(uint8_t *a, uint8_t *b, uint32_t len)
 {
-  Hacl_Hash_SHA2_256_init(state);
+  for (uint32_t i = (uint32_t)0; i < len; i = i + (uint32_t)1)
+  {
+    uint8_t xi = a[i];
+    uint8_t yi = b[i];
+    a[i] = xi ^ yi;
+  }
 }
 
-void SHA2_256_update(uint32_t *state, uint8_t *data_8)
+static void
+Hacl_HMAC_SHA2_256_hmac_core(uint8_t *mac, uint8_t *key, uint8_t *data, uint32_t len)
 {
-  Hacl_Hash_SHA2_256_update(state, data_8);
+  uint8_t ipad[64];
+  for (uint32_t _i = 0; _i < (uint32_t)64; ++_i)
+    ipad[_i] = (uint8_t)0x36;
+  uint8_t opad[64];
+  for (uint32_t _i = 0; _i < (uint32_t)64; ++_i)
+    opad[_i] = (uint8_t)0x5c;
+  Hacl_HMAC_SHA2_256_xor_bytes_inplace(ipad, key, (uint32_t)64);
+  uint32_t state0[137] = { 0 };
+  uint32_t n0 = len / (uint32_t)64;
+  uint32_t r0 = len % (uint32_t)64;
+  uint8_t *blocks0 = data;
+  uint8_t *last0 = data + n0 * (uint32_t)64;
+  Hacl_Hash_SHA2_256_init(state0);
+  Hacl_Hash_SHA2_256_update(state0, ipad);
+  Hacl_Hash_SHA2_256_update_multi(state0, blocks0, n0);
+  Hacl_Hash_SHA2_256_update_last(state0, last0, r0);
+  uint8_t *hash0 = ipad;
+  Hacl_Hash_SHA2_256_finish(state0, hash0);
+  uint8_t *s4 = ipad;
+  Hacl_HMAC_SHA2_256_xor_bytes_inplace(opad, key, (uint32_t)64);
+  uint32_t state1[137] = { 0 };
+  Hacl_Hash_SHA2_256_init(state1);
+  Hacl_Hash_SHA2_256_update(state1, opad);
+  Hacl_Hash_SHA2_256_update_last(state1, s4, (uint32_t)32);
+  Hacl_Hash_SHA2_256_finish(state1, mac);
 }
 
-void SHA2_256_update_multi(uint32_t *state, uint8_t *data, uint32_t n1)
+static void
+Hacl_HMAC_SHA2_256_hmac(
+  uint8_t *mac,
+  uint8_t *key,
+  uint32_t keylen,
+  uint8_t *data,
+  uint32_t datalen
+)
 {
-  Hacl_Hash_SHA2_256_update_multi(state, data, n1);
+  uint8_t nkey[64];
+  for (uint32_t _i = 0; _i < (uint32_t)64; ++_i)
+    nkey[_i] = (uint8_t)0x00;
+  if (keylen <= (uint32_t)64)
+    memcpy(nkey, key, keylen * sizeof key[0]);
+  else
+  {
+    uint8_t *nkey0 = nkey;
+    Hacl_Hash_SHA2_256_hash(nkey0, key, keylen);
+  }
+  Hacl_HMAC_SHA2_256_hmac_core(mac, nkey, data, datalen);
 }
 
-void SHA2_256_update_last(uint32_t *state, uint8_t *data, uint32_t len)
+void hmac_core(uint8_t *mac, uint8_t *key, uint8_t *data, uint32_t len)
 {
-  Hacl_Hash_SHA2_256_update_last(state, data, len);
+  Hacl_HMAC_SHA2_256_hmac_core(mac, key, data, len);
 }
 
-void SHA2_256_finish(uint32_t *state, uint8_t *hash1)
+void hmac(uint8_t *mac, uint8_t *key, uint32_t keylen, uint8_t *data, uint32_t datalen)
 {
-  Hacl_Hash_SHA2_256_finish(state, hash1);
-}
-
-void SHA2_256_hash(uint8_t *hash1, uint8_t *input, uint32_t len)
-{
-  Hacl_Hash_SHA2_256_hash(hash1, input, len);
+  Hacl_HMAC_SHA2_256_hmac(mac, key, keylen, data, datalen);
 }
 
