@@ -38,5 +38,4 @@ FStar_Seq_Base_seq FStar_Seq_Base_slice(FStar_Seq_Base_seq x, FStar_Seq_Base_seq
   KRML_EXIT;
 }
 
-Prims_int FStar_UInt32_v(uint32_t x) { return (void *)0; }
 FStar_UInt32_t FStar_UInt32_uint_to_t(Prims_nat x) { KRML_EXIT; }
