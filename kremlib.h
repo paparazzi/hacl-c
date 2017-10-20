@@ -35,7 +35,7 @@ void print_bytes(uint8_t *b, uint32_t len);
 
 // If some globals need to be initialized before the main, then kremlin will
 // generate and try to link last a function with this type:
-void kremlinit_globals();
+void kremlinit_globals(void);
 
 // Buffers (FIXME remove eqb!)
 #define FStar_Buffer_eqb(b1, b2, n)                                            \
@@ -148,13 +148,15 @@ FStar_Seq_Base_seq FStar_Seq_Base_slice(FStar_Seq_Base_seq x,
 #define FStar_Seq_Properties_cons(x, y) 0
 #define FStar_Seq_Base_index(x, y) 0
 
-// Endian-ness
+/******************************************************************************/
+/* Endian-ness macros that can only be implemented in C                       */
+/******************************************************************************/
 
-// ... for Linux
+/* ... for Linux */
 #if defined(__linux__) || defined(__CYGWIN__)
 #include <endian.h>
 
-// ... for OSX
+/* ... for OSX */
 #elif defined(__APPLE__)
 #include <libkern/OSByteOrder.h>
 #define htole64(x) OSSwapHostToLittleInt64(x)
@@ -172,7 +174,31 @@ FStar_Seq_Base_seq FStar_Seq_Base_slice(FStar_Seq_Base_seq x,
 #define htobe32(x) OSSwapHostToBigInt32(x)
 #define be32toh(x) OSSwapBigToHostInt32(x)
 
-// ... for Windows
+/* ... for Solaris */
+#elif defined(__sun__)
+#include <sys/byteorder.h>
+#define htole64(x) LE_64(x)
+#define le64toh(x) LE_IN64(x)
+#define htobe64(x) BE_64(x)
+#define be64toh(x) BE_IN64(x)
+
+#define htole16(x) LE_16(x)
+#define le16toh(x) LE_IN16(x)
+#define htobe16(x) BE_16(x)
+#define be16toh(x) BE_IN16(x)
+
+#define htole32(x) LE_32(x)
+#define le32toh(x) LE_IN32(x)
+#define htobe32(x) BE_32(x)
+#define be32toh(x) BE_IN32(x)
+
+/* ... for the BSDs */
+#elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
+#include <sys/endian.h>
+#elif defined(__OpenBSD__)
+#include <endian.h>
+
+/* ... for Windows */
 #elif (defined(_WIN16) || defined(_WIN32) || defined(_WIN64)) &&               \
     !defined(__WINDOWS__)
 #include <windows.h>
@@ -234,7 +260,62 @@ FStar_Seq_Base_seq FStar_Seq_Base_slice(FStar_Seq_Base_seq x,
 
 #endif
 
+/* ... generic fallback code */
+#else
+
+#if BYTE_ORDER == BIG_ENDIAN
+/* Byte swapping code inspired by:
+ * https://github.com/rweather/arduinolibs/blob/master/libraries/Crypto/utility/EndianUtil.h
+ * */
+
+#define htobe32(x) (x)
+#define be32toh(x) (x)
+#define htole32(x)                                                             \
+  (__extension__({                                                             \
+    uint32_t _temp = (x);                                                      \
+    ((_temp >> 24) & 0x000000FF) | ((_temp >> 8) & 0x0000FF00) |               \
+        ((_temp << 8) & 0x00FF0000) | ((_temp << 24) & 0xFF000000);            \
+  }))
+#define le32toh(x) (htole32((x)))
+
+#define htobe64(x) (x)
+#define be64toh(x) (x)
+#define htole64(x)                                                             \
+  (__extension__({                                                             \
+    uint64_t __temp = (x);                                                     \
+    uint32_t __low = htobe32((uint32_t)__temp);                                \
+    uint32_t __high = htobe32((uint32_t)(__temp >> 32));                       \
+    (((uint64_t)__low) << 32) | __high;                                        \
+  }))
+#define le64toh(x) (htole64((x)))
+
+#else
+
+#define htole32(x) (x)
+#define le32toh(x) (x)
+#define htobe32(x)                                                             \
+  (__extension__({                                                             \
+    uint32_t _temp = (x);                                                      \
+    ((_temp >> 24) & 0x000000FF) | ((_temp >> 8) & 0x0000FF00) |               \
+        ((_temp << 8) & 0x00FF0000) | ((_temp << 24) & 0xFF000000);            \
+  }))
+#define be32toh(x) (htobe32((x)))
+
+#define htole64(x) (x)
+#define le64toh(x) (x)
+#define htobe64(x)                                                             \
+  (__extension__({                                                             \
+    uint64_t __temp = (x);                                                     \
+    uint32_t __low = htobe32((uint32_t)__temp);                                \
+    uint32_t __high = htobe32((uint32_t)(__temp >> 32));                       \
+    (((uint64_t)__low) << 32) | __high;                                        \
+  }))
+#define be64toh(x) (htobe64((x)))
+
 #endif
+
+#endif
+
 
 // Loads and stores. These avoid undefined behavior due to unaligned memory
 // accesses, via memcpy.
