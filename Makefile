@@ -27,7 +27,7 @@ TWEETNACL_HOME ?= $(HACL_HOME)/other_providers/tweetnacl
 # Default target
 #
 
-all: libhacl32.so
+all: hacl.a
 
 #
 # Library (64 bits)
@@ -112,7 +112,7 @@ libhacl32.so: $(FILES)
 # Library (32 bits), static
 #
 
-libhacl32.a: $(FILES)
+hacl.a: $(FILES)
 	$(CC) $(LIBFLAGS32) \
 	  Salsa20.c -c -o Salsa20.o
 	$(CC) $(LIBFLAGS32) \
@@ -132,7 +132,7 @@ libhacl32.a: $(FILES)
 	$(CC) -shared  $(LIBFLAGS32) -I ../../test/test-files -I . -Wall \
 	  hacl_test_utils.c \
 	  Salsa20.o Poly1305_64.o Chacha20.o AEAD_Poly1305_64.o Chacha20Poly1305.o SHA2_512.o Ed25519.o Curve25519.o kremlib.c Hacl_Policies.c NaCl.c randombytes.c haclnacl.c \
-	  -o libhacl32.a
+	  -o hacl.a
 
 unit-tests: libhacl.so
 	$(CC) $(CCOPTS) \
