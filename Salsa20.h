@@ -5,7 +5,6 @@
 
 
 
-#include "testlib.h"
 
 typedef uint32_t Hacl_Impl_Xor_Lemmas_u32;
 

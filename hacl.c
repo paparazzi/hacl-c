@@ -1,4 +1,4 @@
-#include "haclnacl.h"
+#include "hacl.h"
 #include "kremlib.h"
 #include "Curve25519.h"
 #include "Chacha20.h"
