@@ -1,6 +1,6 @@
 #include "kremlib.h"
 #include "testlib.h"
-#include "SHA2_512.h"
+#include "Hacl_SHA2_512.h"
 #include "sodium.h"
 #include "tweetnacl.h"
 #include "hacl_test_utils.h"
@@ -79,6 +79,7 @@ int32_t perf_sha512() {
 
   cycles a,b;
   clock_t t1,t2;
+  uint64_t res = 0;
 
   t1 = clock();
   a = TestLib_cpucycles_begin();
@@ -113,7 +114,7 @@ int32_t perf_sha512() {
   t1 = clock();
   a = TestLib_cpucycles_begin();
   for (int i = 0; i < ROUNDS; i++){
-    SHA2_512_hash(macs + SIGSIZE * i, plain, len);
+    Hacl_SHA2_512_hash(macs + SIGSIZE * i, plain, len);
   }
   b = TestLib_cpucycles_end();
   t2 = clock();
@@ -144,7 +145,7 @@ int32_t perf_sha512() {
 
   return exit_success;
 }
-  
+
 int32_t main(int argc, char *argv[])
 {
   if (argc < 2 || strcmp(argv[1], "perf") == 0 ) {
@@ -155,7 +156,7 @@ int32_t main(int argc, char *argv[])
     return res;
   } else if (argc == 2 && strcmp (argv[1], "unit-test") == 0 ) {
     return test_sha512();
-  } else {    
+  } else {
     printf("Error: expected arguments 'perf' (default) or 'unit-test'.\n");
     return exit_failure;
   }

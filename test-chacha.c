@@ -1,6 +1,6 @@
 #include "kremlib.h"
 #include "testlib.h"
-#include "Chacha20.h"
+#include "Hacl_Chacha20.h"
 #include "sodium.h"
 #include "openssl/evp.h"
 #include "hacl_test_utils.h"
@@ -73,7 +73,7 @@ void flush_results(char *txt, uint64_t hacl_cy, uint64_t sodium_cy, uint64_t oss
 }
 
 
-#define PLAINLEN (1024*1024)
+#define PLAINLEN (16*1024)
 #define ROUNDS 1000
 #define MACSIZE 32
 
@@ -370,10 +370,10 @@ nonce[12] =
 int32_t test_chacha()
 {
   uint8_t ciphertext[114];
-  memset(ciphertext, 0, 114 * sizeof ciphertext[0]); 
+  memset(ciphertext, 0, 114 * sizeof ciphertext[0]);
   uint32_t counter = (uint32_t )1;
   uint32_t ctx[32] = { 0 };
-  Chacha20_chacha20(ciphertext,plaintext,114, key, nonce, counter);
+  Hacl_Chacha20_chacha20(ciphertext,plaintext,114, key, nonce, counter);
   TestLib_compare_and_print("HACL Chacha20", expected, ciphertext, 114);
 
   crypto_stream_chacha20_ietf_xor_ic(ciphertext,plaintext, 114, nonce, 1, key);
@@ -400,7 +400,7 @@ int32_t perf_chacha() {
   t1 = clock();
   a = TestLib_cpucycles_begin();
   for (int i = 0; i < ROUNDS; i++){
-    Chacha20_chacha20(plain,plain,len, key, nonce, counter);
+    Hacl_Chacha20_chacha20(plain,plain,len, key, nonce, counter);
     plain[0] = cipher[0];
   }
   b = TestLib_cpucycles_end();
@@ -409,7 +409,7 @@ int32_t perf_chacha() {
   hacl_utime = (double) t2 - t1;
   print_results("HACL ChaCha20 speed", (double) t2 - t1,
 	        (double) b - a, ROUNDS, PLAINLEN);
-  for (int i = 0; i < PLAINLEN; i++) 
+  for (int i = 0; i < PLAINLEN; i++)
     res += (uint64_t) plain[i];
   printf("Composite result (ignore): %" PRIx64 "\n", res);
 
@@ -424,7 +424,7 @@ int32_t perf_chacha() {
   sodium_utime = (double) t2 - t1;
   print_results("Sodium ChaCha20 speed", (double)t2-t1,
 		(double) b - a, ROUNDS, PLAINLEN);
-  for (int i = 0; i < PLAINLEN; i++) 
+  for (int i = 0; i < PLAINLEN; i++)
     res += (uint64_t) plain[i];
   printf("Composite result (ignore): %" PRIx64 "\n", res);
 
@@ -439,13 +439,13 @@ int32_t perf_chacha() {
   ossl_utime = (double) t2 - t1;
   print_results("OpenSSL ChaCha20 speed", (double)t2-t1,
 		(double) b - a, ROUNDS, PLAINLEN);
-  for (int i = 0; i < PLAINLEN; i++) 
+  for (int i = 0; i < PLAINLEN; i++)
     res += (uint64_t) plain[i];
   printf("Composite result (ignore): %" PRIx64 "\n", res);
 
-  
+
   flush_results("CHACHA20", hacl_cy, sodium_cy, ossl_cy, 0, hacl_utime, sodium_utime, ossl_utime, 0, ROUNDS, PLAINLEN);
-  
+
   return exit_success;
 }
 

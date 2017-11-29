@@ -1,13 +1,10 @@
 #include "kremlib.h"
 #include "testlib.h"
-#include "Curve25519.h"
+#include "Hacl_Curve25519.h"
 #include "sodium.h"
 #include "tweetnacl.h"
 #include "ec_lcl.h"
-
-#ifdef _WIN32
-#include <WinCrypt.h>
-#endif
+#include "hacl_test_utils.h"
 
 
 void ossl_curve25519(uint8_t* result, uint8_t* scalar, uint8_t* input){
@@ -312,16 +309,16 @@ int32_t test_curve()
   uint8_t result[KEYSIZE];
   memset(result, 0, KEYSIZE * sizeof result[0]);
 
-  Curve25519_crypto_scalarmult(result, scalar1, input1);
+  Hacl_Curve25519_crypto_scalarmult(result, scalar1, input1);
   TestLib_compare_and_print("HACL Curve25519", expected1, result, KEYSIZE);
-  Curve25519_crypto_scalarmult(result, scalar2, input2);
+  Hacl_Curve25519_crypto_scalarmult(result, scalar2, input2);
   TestLib_compare_and_print("HACL Curve25519", expected2, result, KEYSIZE);
 
   int res = crypto_scalarmult_curve25519(result, scalar1, input1);
   TestLib_compare_and_print("Sodium Curve25519", expected1, result, KEYSIZE);
   res = crypto_scalarmult_curve25519(result, scalar2, input2);
   TestLib_compare_and_print("Sodium Curve25519", expected2, result, KEYSIZE);
-  
+
   return exit_success;
 }
 
@@ -335,36 +332,10 @@ int32_t perf_curve() {
   sk = malloc(KEYSIZE * ROUNDS * sizeof(char));
   mul = malloc(KEYSIZE * ROUNDS * sizeof(char));
 
-#ifdef _WIN32
-  HCRYPTPROV hCryptProv;
-
-  if (!CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_RSA_FULL, 0)) {
-    fprintf(stderr, "Error acquiring context\n");
+  if (!read_random_bytes(len, sk))
     exit(1);
-  }
-  if (!CryptGenRandom(hCryptProv, len, sk)) {
-    fprintf(stderr, "Error reading\n");
+  if (!read_random_bytes(len, pk))
     exit(1);
-  }
-  if (!CryptGenRandom(hCryptProv, len, pk)) {
-    fprintf(stderr, "Error reading\n");
-    exit(1);
-  }
-
-  uint64_t res = len;
-#else
-  int fd = open("/dev/urandom", O_RDONLY);
-  uint64_t res = read(fd, sk, len);
-  if (res != len) {
-    printf("Error on reading, got %" PRIu64 " bytes\n", res);
-    return 1;
-  }
-  res = read(fd, pk, len);
-  if (res != len) {
-    printf("Error on reading, got %" PRIu64 " bytes\n", res);
-    return 1;
-  }
-#endif
 
   uint64_t d[ROUNDS];
   cycles a,b;
@@ -372,7 +343,7 @@ int32_t perf_curve() {
   t1 = clock();
   for (int i = 0; i < ROUNDS; i++){
     a = TestLib_cpucycles();
-    Curve25519_crypto_scalarmult(mul + KEYSIZE * i, sk + KEYSIZE * i, pk + KEYSIZE * i);
+    Hacl_Curve25519_crypto_scalarmult(mul + KEYSIZE * i, sk + KEYSIZE * i, pk + KEYSIZE * i);
     b = TestLib_cpucycles();
     d[i] = b - a;
   }
@@ -380,6 +351,7 @@ int32_t perf_curve() {
   hacl_cy = (double) median(d,ROUNDS);
   hacl_utime = (double)t2 - t1;
   print_results("HACL Curve25519 speed", (double)(t2-t1)/ROUNDS, (double) median(d,ROUNDS), 1, 1);
+  uint64_t res = 0;
   for (int i = 0; i < ROUNDS; i++) res += (uint64_t)*(mul+KEYSIZE*i) + (uint64_t)*(mul+KEYSIZE*i+8)
                                  + (uint64_t)*(mul+KEYSIZE*i+16) + (uint64_t)*(mul+KEYSIZE*i+24);
   printf("Composite result (ignore): %" PRIx64 "\n", res);
@@ -445,9 +417,8 @@ int32_t main(int argc, char *argv[])
     return res;
   } else if (argc == 2 && strcmp (argv[1], "unit-test") == 0 ) {
     return test_curve();
-  } else {    
+  } else {
     printf("Error: expected arguments 'perf' (default) or 'unit-test'.\n");
     return exit_failure;
   }
 }
-  
