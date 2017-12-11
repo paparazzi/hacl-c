@@ -51,7 +51,8 @@ typedef FStar_UInt128_t Hacl_Bignum_Wide_t;
 
 typedef uint64_t Hacl_Bignum_Limb_t;
 
-extern void Hacl_Bignum_lemma_diff(Prims_int x0, Prims_int x1, Prims_pos x2);
+// TODO: multiple include (already defined in  Hacl_Curve25519.h)
+//extern void Hacl_Bignum_lemma_diff(Prims_int x0, Prims_int x1, Prims_pos x2);
 
 typedef struct 
 {
@@ -224,7 +225,8 @@ typedef uint8_t *Hacl_Ed25519_hint8_p;
 
 void Hacl_Ed25519_sign(uint8_t *signature, uint8_t *secret, uint8_t *msg, uint32_t len1);
 
-bool Hacl_Ed25519_verify(uint8_t *public, uint8_t *msg, uint32_t len1, uint8_t *signature);
+// TODO: original argument called "public" which is a keyword for g++
+bool Hacl_Ed25519_verify(uint8_t *publickey, uint8_t *msg, uint32_t len1, uint8_t *signature);
 
 void Hacl_Ed25519_secret_to_public(uint8_t *out, uint8_t *secret);
 #endif

@@ -503,7 +503,6 @@ static inline uint128_t FStar_UInt128_gte_mask(uint128_t x, uint128_t y) {
 
 
 #  else /* !defined(KRML_NOUINT128) */
-
   /* This is a bad circular dependency... should fix it properly. */
 #    include "FStar.h"
 
