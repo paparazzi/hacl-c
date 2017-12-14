@@ -47,8 +47,7 @@ libhacl.so: $(FILES)
 	$(CC) $(LIBFLAGS) \
 	  Hacl_Chacha20Poly1305.c -c -o Hacl_Chacha20Poly1305.o
 	$(CC) $(OTHER) $(LIBFLAGS) -I . -Wall \
-	  hacl_test_utils.c \
-	  Hacl_Salsa20.o Hacl_Poly1305_64.o Hacl_Chacha20.o AEAD_Poly1305_64.o Hacl_Chacha20Poly1305.o Hacl_SHA2_512.o Hacl_Ed25519.o Hacl_Curve25519.o kremlib.c Hacl_Policies.c NaCl.c randombytes.c haclnacl.c \
+	  Hacl_Salsa20.o Hacl_Poly1305_64.o Hacl_Chacha20.o AEAD_Poly1305_64.o Hacl_Chacha20Poly1305.o Hacl_SHA2_512.o Hacl_Ed25519.o Hacl_Curve25519.o kremlib.c Hacl_Policies.c NaCl.c haclnacl.c \
 	  -o libhacl.so
 
 
@@ -74,8 +73,7 @@ libhacl.a: $(FILES)
 	$(CC) $(LIBFLAGS) \
 	  Hacl_Chacha20Poly1305.c -c -o Hacl_Chacha20Poly1305.o
 	$(CC) $(OTHER) $(LIBFLAGS) -I . -Wall \
-	  hacl_test_utils.c \
-	  Hacl_Salsa20.o Hacl_Poly1305_64.o Hacl_Chacha20.o AEAD_Poly1305_64.o Hacl_Chacha20Poly1305.o Hacl_SHA2_512.o Hacl_Ed25519.o Hacl_Curve25519.o kremlib.c Hacl_Policies.c NaCl.c randombytes.c haclnacl.c \
+	  Hacl_Salsa20.o Hacl_Poly1305_64.o Hacl_Chacha20.o AEAD_Poly1305_64.o Hacl_Chacha20Poly1305.o Hacl_SHA2_512.o Hacl_Ed25519.o Hacl_Curve25519.o kremlib.c Hacl_Policies.c NaCl.c haclnacl.c \
 	  -o libhacl.a
 
 #
@@ -103,7 +101,7 @@ libhacl32.so: $(FILES)
 	  Hacl_Chacha20Poly1305.c -c -o Hacl_Chacha20Poly1305.o
 	$(CC) -shared  $(LIBFLAGS32) -I . -Wall \
 	  hacl_test_utils.c \
-	  FStar.o Hacl_Salsa20.o Hacl_Poly1305_64.o Hacl_Chacha20.o AEAD_Poly1305_64.o Hacl_Chacha20Poly1305.o Hacl_SHA2_512.o Hacl_Ed25519.o Hacl_Curve25519.o kremlib.c Hacl_Policies.c NaCl.c randombytes.c haclnacl.c \
+	  FStar.o Hacl_Salsa20.o Hacl_Poly1305_64.o Hacl_Chacha20.o AEAD_Poly1305_64.o Hacl_Chacha20Poly1305.o Hacl_SHA2_512.o Hacl_Ed25519.o Hacl_Curve25519.o kremlib.c Hacl_Policies.c NaCl.c haclnacl.c \
 	  -o libhacl32.so
 
 #
@@ -131,7 +129,7 @@ libhacl32.a: $(FILES)
 	  Hacl_Chacha20Poly1305.c -c -o Hacl_Chacha20Poly1305.o
 	$(CC) -shared  $(LIBFLAGS32) -I . -Wall \
 	  hacl_test_utils.c \
-	  FStar.o Hacl_Salsa20.o Hacl_Poly1305_64.o Hacl_Chacha20.o AEAD_Poly1305_64.o Hacl_Chacha20Poly1305.o Hacl_SHA2_512.o Hacl_Ed25519.o Hacl_Curve25519.o kremlib.c Hacl_Policies.c NaCl.c randombytes.c haclnacl.c \
+	  FStar.o Hacl_Salsa20.o Hacl_Poly1305_64.o Hacl_Chacha20.o AEAD_Poly1305_64.o Hacl_Chacha20Poly1305.o Hacl_SHA2_512.o Hacl_Ed25519.o Hacl_Curve25519.o kremlib.c Hacl_Policies.c NaCl.c  haclnacl.c \
 	  -o libhacl32.a
 
 unit-tests: libhacl.so
