@@ -5,8 +5,8 @@ HACL_HOME ?= ../..
 #
 # Compilation flags
 #
-CCOPTS = -Ofast -march=native -mtune=native -m64 -fwrapv -fomit-frame-pointer -funroll-loops
-CCOPTS32 = -Ofast -mtune=generic -m32 -fwrapv -fomit-frame-pointer -funroll-loops
+CCOPTS = -Ofast -march=native -mtune=native -m64 -fwrapv -fomit-frame-pointer -funroll-loops -std=gnu99
+CCOPTS32 = -Ofast -mtune=generic -m32 -fwrapv -fomit-frame-pointer -funroll-loops -std=gnu99
 
 ifeq ($(SNAPSHOT_DIR),snapshots/hacl-c-compcert)
   LIBFLAGS=$(CCOPTS) $(CFLAGS)
