@@ -197,8 +197,8 @@ inline static void
 Hacl_Impl_Poly1305_64_poly1305_process_last_block_(
   uint8_t *block,
   Hacl_Impl_Poly1305_64_State_poly1305_state st,
-  uint8_t *m,
-  uint64_t rem_
+  uint8_t *m __attribute__((unused)),
+  uint64_t rem_ __attribute__((unused))
 )
 {
   uint64_t tmp[3U] = { 0U };
@@ -335,13 +335,13 @@ Hacl_Standalone_Poly1305_64_poly1305_partial(
   Hacl_Standalone_Poly1305_64_poly1305_blocks(st, input, len1);
 }
 
-Prims_nat AEAD_Poly1305_64_seval(void *b)
+Prims_nat AEAD_Poly1305_64_seval(void *b __attribute__((unused)))
 {
   KRML_HOST_PRINTF("KreMLin abort at %s:%d\n%s\n", __FILE__, __LINE__, "noextract flag");
   KRML_HOST_EXIT(255U);
 }
 
-Prims_int AEAD_Poly1305_64_selem(void *s)
+Prims_int AEAD_Poly1305_64_selem(void *s __attribute__((unused)))
 {
   KRML_HOST_PRINTF("KreMLin abort at %s:%d\n%s\n", __FILE__, __LINE__, "noextract flag");
   KRML_HOST_EXIT(255U);

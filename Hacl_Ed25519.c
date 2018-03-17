@@ -1089,7 +1089,7 @@ Hacl_Impl_Ed25519_Ladder_Step_swap_cond(
 }
 
 static void
-Hacl_Impl_Ed25519_Ladder_Step_loop_step_1(uint64_t *b, uint8_t *k1, uint32_t ctr, uint8_t i)
+Hacl_Impl_Ed25519_Ladder_Step_loop_step_1(uint64_t *b, uint8_t *k1 __attribute__((unused)), uint32_t ctr __attribute__((unused)), uint8_t i)
 {
   uint64_t *nq = b;
   uint64_t *nqpq = b + (uint32_t)20U;
@@ -1097,7 +1097,7 @@ Hacl_Impl_Ed25519_Ladder_Step_loop_step_1(uint64_t *b, uint8_t *k1, uint32_t ctr
   Hacl_Impl_Ed25519_Ladder_Step_swap_cond_inplace(nq, nqpq, bit);
 }
 
-static void Hacl_Impl_Ed25519_Ladder_Step_loop_step_2(uint64_t *b, uint8_t *k1, uint32_t ctr)
+static void Hacl_Impl_Ed25519_Ladder_Step_loop_step_2(uint64_t *b, uint8_t *k1 __attribute__((unused)), uint32_t ctr __attribute__((unused)))
 {
   uint64_t *nq = b;
   uint64_t *nqpq = b + (uint32_t)20U;
@@ -1108,7 +1108,7 @@ static void Hacl_Impl_Ed25519_Ladder_Step_loop_step_2(uint64_t *b, uint8_t *k1, 
 }
 
 static void
-Hacl_Impl_Ed25519_Ladder_Step_loop_step_3(uint64_t *b, uint8_t *k1, uint32_t ctr, uint8_t i)
+Hacl_Impl_Ed25519_Ladder_Step_loop_step_3(uint64_t *b, uint8_t *k1 __attribute__((unused)), uint32_t ctr __attribute__((unused)), uint8_t i)
 {
   uint64_t *nq = b;
   uint64_t *nqpq = b + (uint32_t)20U;
@@ -1488,7 +1488,7 @@ static void Hacl_Impl_Ed25519_SecretToPublic_point_mul_g(uint64_t *result, uint8
 static void
 Hacl_Impl_Ed25519_SecretToPublic_secret_to_public_(
   uint8_t *out,
-  uint8_t *secret,
+  uint8_t *secret __attribute__((unused)),
   uint8_t *expanded_secret
 )
 {
@@ -1764,13 +1764,13 @@ Hacl_Impl_Ed25519_RecoverX_recover_x_(uint64_t *x, uint64_t *y, uint64_t sign1, 
       return true;
     else
     {
-      uint64_t *x2 = tmp;
-      uint64_t *x30 = tmp + (uint32_t)5U;
+      uint64_t *x2_ = tmp;
+      uint64_t *x30_ = tmp + (uint32_t)5U;
       uint64_t *t00 = tmp + (uint32_t)10U;
       uint64_t *t10 = tmp + (uint32_t)15U;
-      Hacl_Impl_Ed25519_Pow2_252m2_pow2_252m2(x30, x2);
-      Hacl_Bignum25519_fsquare(t00, x30);
-      memcpy(t10, x2, (uint32_t)5U * sizeof x2[0U]);
+      Hacl_Impl_Ed25519_Pow2_252m2_pow2_252m2(x30_, x2_);
+      Hacl_Bignum25519_fsquare(t00, x30_);
+      memcpy(t10, x2_, (uint32_t)5U * sizeof x2_[0U]);
       Hacl_Bignum25519_fdifference(t10, t00);
       Hacl_Bignum25519_reduce_513(t10);
       Hacl_Bignum25519_reduce(t10);
@@ -1784,15 +1784,15 @@ Hacl_Impl_Ed25519_RecoverX_recover_x_(uint64_t *x, uint64_t *y, uint64_t sign1, 
           (uint64_t)0x0007ef5e9cbd0c60U,
           (uint64_t)0x00078595a6804c9eU,
           (uint64_t)0x0002b8324804fc1dU);
-        Hacl_Bignum25519_fmul(x30, x30, sqrt_m1);
+        Hacl_Bignum25519_fmul(x30_, x30_, sqrt_m1);
       }
-      Hacl_Bignum25519_reduce(x30);
-      uint64_t *x20 = tmp;
+      Hacl_Bignum25519_reduce(x30_);
+      uint64_t *x20_ = tmp;
       uint64_t *x3 = tmp + (uint32_t)5U;
       uint64_t *t0 = tmp + (uint32_t)10U;
       uint64_t *t1 = tmp + (uint32_t)15U;
       Hacl_Bignum25519_fsquare(t0, x3);
-      memcpy(t1, x20, (uint32_t)5U * sizeof x20[0U]);
+      memcpy(t1, x20_, (uint32_t)5U * sizeof x20_[0U]);
       Hacl_Bignum25519_fdifference(t1, t0);
       Hacl_Bignum25519_reduce_513(t1);
       Hacl_Bignum25519_reduce(t1);
@@ -2760,7 +2760,6 @@ Hacl_Impl_Ed25519_Sign_Steps_sign_step_4(
   uint64_t *h = tmp_ints + (uint32_t)60U;
   uint8_t *a__ = tmp_bytes + (uint32_t)96U;
   uint8_t *rs_ = tmp_bytes + (uint32_t)160U;
-  uint8_t *apre = tmp_bytes + (uint32_t)224U;
   Hacl_Impl_SHA512_ModQ_sha512_modq_pre_pre2(h, rs_, a__, msg, len1);
 }
 
